@@ -1,136 +1,105 @@
-// using System;
-// using System.Text;
-// using ConsoleApp1.Models.Player;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ConsoleApp1.Models;
+using ConsoleApp1.Data;
 
-// namespace ConsoleApp1.Services
-// {
-//     public class AuthenticationService
-//     {
-//         private readonly DataService _dataService;
-        
-//         public AuthenticationService(DataService dataService)
-//         {
-//             _dataService = dataService;
-//         }
-        
-//         public Player AuthenticatePlayer()
-//         {
-//             while (true)
-//             {
-//                 Console.WriteLine("\n1. Login\n2. Register new account");
-//                 Console.Write("\n👉 Enter your choice (1 or 2): ");
-//                 Console.CursorVisible = true;
-                
-//                 ConsoleKey choice = Console.ReadKey(true).Key;
-//                 Console.CursorVisible = false;
-                
-//                 if (choice == ConsoleKey.D1)
-//                 {
-//                     Console.WriteLine("1");
-//                     // Login
-//                     Console.Write("\nUsername: ");
-//                     Console.CursorVisible = true;
-//                     string username = Console.ReadLine();
-//                     Console.CursorVisible = false;
-                    
-//                     Console.Write("Password: ");
-//                     Console.CursorVisible = true;
-//                     string password = ReadPassword();
-//                     Console.CursorVisible = false;
+namespace ConsoleApp1.Services
+{
+    public class AuthenticationService
+    {
+        // In-memory data storage (could be moved to a repository pattern in future)
+        private static List<Player> players = new List<Player>();
+        private static Dictionary<string, string> userCredentials = SampleData.UserCredentials;
 
-//                     if (_dataService.ValidateCredentials(username, password))
-//                     {
-//                         // Find existing player
-//                         Player existingPlayer = _dataService.GetPlayerByUsername(username);
-//                         if (existingPlayer != null)
-//                         {
-//                             Console.WriteLine($"\n👋 Welcome back, {existingPlayer.Name}!");
-//                             Thread.Sleep(1500);
-//                             return existingPlayer;
-//                         }
-//                         else
-//                         {
-//                             // Create new player profile
-//                             Console.Write("\nEnter your display name: ");
-//                             Console.CursorVisible = true;
-//                             string name = Console.ReadLine();
-//                             Console.CursorVisible = false;
+        internal static Player Login(string username, string password)
+        {
+            // Verify credentials
+            if (userCredentials.TryGetValue(username, out string storedPassword) && password == storedPassword)
+            {
+                // Find existing player
+                Player existingPlayer = players.FirstOrDefault(p => p.Username == username);
+                if (existingPlayer != null)
+                {
+                    return existingPlayer;
+                }
+                else
+                {
+                    // Player credentials exist, but no profile. Need to create profile.
+                    return null;
+                }
+            }
+            
+            // Login failed
+            return null;
+        }
 
-//                             Player player = _dataService.CreatePlayer(username, name);
+        internal static Player Register(string username, string password, string displayName)
+        {
+            // Check if username exists
+            if (userCredentials.ContainsKey(username))
+            {
+                return null; // Username already exists
+            }
 
-//                             Console.WriteLine($"\n👋 Welcome, {player.Name}!");
-//                             Thread.Sleep(1500);
-//                             return player;
-//                         }
-//                     }
-//                     else
-//                     {
-//                         Console.ForegroundColor = ConsoleColor.Red;
-//                         Console.WriteLine("\n❌ Invalid username or password. Try again.");
-//                         Console.ResetColor();
-//                     }
-//                 }
-//                 else if (choice == ConsoleKey.D2)
-//                 {
-//                     Console.WriteLine("2");
-//                     // Register
-//                     Console.Write("\nCreate username: ");
-//                     Console.CursorVisible = true;
-//                     string username = Console.ReadLine();
-//                     Console.CursorVisible = false;
+            // Save credentials
+            userCredentials.Add(username, password);
 
-//                     if (_dataService.UserExists(username))
-//                     {
-//                         Console.ForegroundColor = ConsoleColor.Red;
-//                         Console.WriteLine("❌ Username already exists. Try another one.");
-//                         Console.ResetColor();
-//                         continue;
-//                     }
+            // Create player
+            int playerId = players.Count > 0 ? players.Max(p => p.Id) + 1 : 1;
+            Guid playerGuid = Guid.NewGuid();
 
-//                     Console.Write("Create password: ");
-//                     Console.CursorVisible = true;
-//                     string password = ReadPassword();
-//                     Console.CursorVisible = false;
-                    
-//                     Console.Write("\nEnter your display name: ");
-//                     Console.CursorVisible = true;
-//                     string name = Console.ReadLine();
-//                     Console.CursorVisible = false;
+            Player player = new Player(playerId, playerGuid, username, displayName);
+            players.Add(player);
 
-//                     // Save credentials and create player
-//                     _dataService.AddCredentials(username, password);
-//                     Player player = _dataService.CreatePlayer(username, name);
+            return player;
+        }
 
-//                     Console.WriteLine($"\n✅ Registration successful! Welcome, {player.Name}!");
-//                     Thread.Sleep(1500);
-//                     return player;
-//                 }
-//             }
-//         }
-        
-//         private string ReadPassword()
-//         {
-//             StringBuilder password = new StringBuilder();
-//             ConsoleKeyInfo key;
+        internal static Player CreateProfileForExistingCredentials(string username, string displayName)
+        {
+            int playerId = players.Count > 0 ? players.Max(p => p.Id) + 1 : 1;
+            Guid playerGuid = Guid.NewGuid();
 
-//             do
-//             {
-//                 key = Console.ReadKey(true);
+            Player player = new Player(playerId, playerGuid, username, displayName);
+            players.Add(player);
 
-//                 if (key.Key != ConsoleKey.Enter && key.Key != ConsoleKey.Backspace)
-//                 {
-//                     password.Append(key.KeyChar);
-//                     Console.Write("*");
-//                 }
-//                 else if (key.Key == ConsoleKey.Backspace && password.Length > 0)
-//                 {
-//                     password.Remove(password.Length - 1, 1);
-//                     Console.Write("\b \b");
-//                 }
-//             } while (key.Key != ConsoleKey.Enter);
+            return player;
+        }
 
-//             Console.WriteLine();
-//             return password.ToString();
-//         }
-//     }
-// }
+        internal static Player GetPlayerById(int id)
+        {
+            return players.FirstOrDefault(p => p.Id == id);
+        }
+
+        internal static List<Player> GetAllPlayers()
+        {
+            return players;
+        }
+
+        public static string ReadPassword()
+        {
+            StringBuilder password = new StringBuilder();
+            ConsoleKeyInfo key;
+
+            do
+            {
+                key = Console.ReadKey(true);
+
+                if (key.Key != ConsoleKey.Enter && key.Key != ConsoleKey.Backspace)
+                {
+                    password.Append(key.KeyChar);
+                    Console.Write("*");
+                }
+                else if (key.Key == ConsoleKey.Backspace && password.Length > 0)
+                {
+                    password.Remove(password.Length - 1, 1);
+                    Console.Write("\b \b");
+                }
+            } while (key.Key != ConsoleKey.Enter);
+
+            Console.WriteLine();
+            return password.ToString();
+        }
+    }
+}
