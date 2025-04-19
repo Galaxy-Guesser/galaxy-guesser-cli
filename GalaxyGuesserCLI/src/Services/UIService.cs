@@ -8,11 +8,11 @@ using GalaxyGuesserCLI.Services;
 
 namespace ConsoleApp1.Services
 {
-    public static class UIService
+  public static class UIService
+  {
+    private const string CMD_PREFIX = "/";
+    private static readonly (string Key, string Description)[] COMMANDS = new[]
     {
-        private const string CMD_PREFIX = "/";
-        private static readonly (string Key, string Description)[] COMMANDS = new[]
-        {
             ("help", "Show help information"),
             ("howtoplay", "Show how to play instructions"),
             ("categories", "List available categories"),
@@ -117,28 +117,28 @@ public static void PrintGalaxyHeader()
     };
 
 
-    // Display main title with color gradient
-    DisplayColorGradient(galaxyTitle, ConsoleColor.DarkMagenta, ConsoleColor.Cyan);
-    
-    // Subtitle with pulsing effect
-    string[] subtitle = new string[]
-    {
+      // Display main title with color gradient
+      DisplayColorGradient(galaxyTitle, ConsoleColor.DarkMagenta, ConsoleColor.Cyan);
+
+      // Subtitle with pulsing effect
+      string[] subtitle = new string[]
+      {
         @"     ☄️  EXPLORE THE UNIVERSE - DISCOVER NEW WORLDS  ☄️"
-    };
-    
-    Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine();
-    foreach (string line in subtitle)
-    {
+      };
+
+      Console.ForegroundColor = ConsoleColor.Yellow;
+      Console.WriteLine();
+      foreach (string line in subtitle)
+      {
         Console.WriteLine(line);
+      }
+
+      // Elegant separator
+      Console.ForegroundColor = ConsoleColor.DarkCyan;
+      Console.WriteLine("\n⭐ ════════════════════════════════════════════════════ ⭐");
+      Console.ResetColor();
+      Console.WriteLine();
     }
-    
-    // Elegant separator
-    Console.ForegroundColor = ConsoleColor.DarkCyan;
-    Console.WriteLine("\n⭐ ════════════════════════════════════════════════════ ⭐");
-    Console.ResetColor();
-    Console.WriteLine();
-}
 
 private static void DisplayColorGradient(string[] text, ConsoleColor startColor, ConsoleColor endColor)
 {
@@ -157,7 +157,7 @@ private static void DisplayColorGradient(string[] text, ConsoleColor startColor,
     {
         int colorIndex = (int)Math.Floor((double)i / text.Length * gradientColors.Length);
         if (colorIndex >= gradientColors.Length) colorIndex = gradientColors.Length - 1;
-        
+
         Console.ForegroundColor = gradientColors[colorIndex];
         Console.WriteLine(text[i]);
     }
@@ -165,92 +165,92 @@ private static void DisplayColorGradient(string[] text, ConsoleColor startColor,
     Console.ForegroundColor = originalFg;
 }
 
-        public static void ShowHelp(Dictionary<string,string> COMMANDS)
-        {
-            Console.Clear();
-            PrintGalaxyHeader();
-            
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("\n📖 AVAILABLE COMMANDS");
-            Console.ResetColor();
-            
-            Console.WriteLine($"\nUse {CMD_PREFIX}[command] to execute any of these commands:");
-            
-            foreach (var cmd in COMMANDS)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write($"{CMD_PREFIX}{cmd.Key,-15}");
-                Console.ResetColor();
-                Console.WriteLine($" - {cmd.Value}");
-            }
-            
-            Console.WriteLine("\nYou can use commands at any input prompt in the application.");
-        }
-
-        public static void ShowFeedback(string message, ConsoleColor color)
-        {
-            Console.ForegroundColor = color;
-            Console.WriteLine("\n" + message);
-            Console.ResetColor();
-        }
-
-        public static void Continue()
+    public static void ShowHelp(Dictionary<string, string> COMMANDS)
     {
-        Console.WriteLine("\nReturn to main menu...");
-        Console.ReadKey(true);
+      Console.Clear();
+      PrintGalaxyHeader();
+
+      Console.ForegroundColor = ConsoleColor.Cyan;
+      Console.WriteLine("\n📖 AVAILABLE COMMANDS");
+      Console.ResetColor();
+
+      Console.WriteLine($"\nUse {CMD_PREFIX}[command] to execute any of these commands:");
+
+      foreach (var cmd in COMMANDS)
+      {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write($"{CMD_PREFIX}{cmd.Key,-15}");
+        Console.ResetColor();
+        Console.WriteLine($" - {cmd.Value}");
+      }
+
+      Console.WriteLine("\nYou can use commands at any input prompt in the application.");
     }
 
-     static void DisplayFullQuestion(Question q, int current, int total, int secondsRemaining)
-        {
-            Console.Clear();
-            PrintGalaxyHeader();
-            
-            Console.WriteLine($"⏱ Time: {secondsRemaining}s [" + new string(' ', Console.WindowWidth - 20) + "]");
-            
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"\nQuestion {current}/{total}:");
-            Console.ResetColor();
-            
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine($"\n{q.Text}\n");
-            Console.ResetColor();
-            Console.WriteLine(); // Extra spacing
-            Console.WriteLine("Answer options:");
-            for (int i = 0; i < q.Options.Length; i++)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write($"{(char)('A' + i)}) ");
-                Console.ResetColor();
-                Console.WriteLine(q.Options[i]);
-            }
+    public static void ShowFeedback(string message, ConsoleColor color)
+    {
+      Console.ForegroundColor = color;
+      Console.WriteLine("\n" + message);
+      Console.ResetColor();
+    }
 
-            Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.Write("\n👉 Press A, B, C or D to select your answer: ");
-            Console.ResetColor();
-            
-            // Make answer input area very visible
-            Console.BackgroundColor = ConsoleColor.DarkGray;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Write("     ");
-            Console.ResetColor();
-        }
+    public static void Continue()
+    {
+      Console.WriteLine("\nReturn to main menu...");
+      Console.ReadKey(true);
+    }
 
-         internal static void ShowFinalResults(Player player, Session session)
-        {
-            Console.Clear();
-            PrintGalaxyHeader();
+    static void DisplayFullQuestion(Question q, int current, int total, int secondsRemaining)
+    {
+      Console.Clear();
+      PrintGalaxyHeader();
 
-            SessionScore playerScore = SessionService.GetPlayerScore(player.playerId, session.Id);
-            int score = playerScore != null ? playerScore.Score : 0;
-            int timeBonus = playerScore != null ? playerScore.TimeRemaining : 0;
+      Console.WriteLine($"⏱ Time: {secondsRemaining}s [" + new string(' ', Console.WindowWidth - 20) + "]");
 
-            int totalQuestions = SessionService.GetSessionQuestionsCount(session.Id);
+      Console.ForegroundColor = ConsoleColor.Cyan;
+      Console.WriteLine($"\nQuestion {current}/{total}:");
+      Console.ResetColor();
 
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine($"\n🌟 Final Score: {score}/{totalQuestions} correct answers");
-            Console.WriteLine($"⏱ Time Bonus: {timeBonus} points");
-            Console.WriteLine($"🏆 Total Score: {score + timeBonus} points\n");
+      Console.ForegroundColor = ConsoleColor.White;
+      Console.WriteLine($"\n{q.Text}\n");
+      Console.ResetColor();
+      Console.WriteLine(); // Extra spacing
+      Console.WriteLine("Answer options:");
+      for (int i = 0; i < q.Options.Length; i++)
+      {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write($"{(char)('A' + i)}) ");
+        Console.ResetColor();
+        Console.WriteLine(q.Options[i]);
+      }
+
+      Console.WriteLine();
+      Console.ForegroundColor = ConsoleColor.DarkCyan;
+      Console.Write("\n👉 Press A, B, C or D to select your answer: ");
+      Console.ResetColor();
+
+      // Make answer input area very visible
+      Console.BackgroundColor = ConsoleColor.DarkGray;
+      Console.ForegroundColor = ConsoleColor.White;
+      Console.Write("     ");
+      Console.ResetColor();
+    }
+
+    internal static void ShowFinalResults(Player player, Session session)
+    {
+      Console.Clear();
+      PrintGalaxyHeader();
+
+      SessionScore playerScore = SessionService.GetPlayerScore(player.playerId, session.Id);
+      int score = playerScore != null ? playerScore.Score : 0;
+      int timeBonus = playerScore != null ? playerScore.TimeRemaining : 0;
+
+      int totalQuestions = SessionService.GetSessionQuestionsCount(session.Id);
+
+      Console.ForegroundColor = ConsoleColor.Magenta;
+      Console.WriteLine($"\n🌟 Final Score: {score}/{totalQuestions} correct answers");
+      Console.WriteLine($"⏱ Time Bonus: {timeBonus} points");
+      Console.WriteLine($"🏆 Total Score: {score + timeBonus} points\n");
 
             Console.WriteLine("🏆 Leaderboard:");
             var leaderboard = SessionService.GetSessionLeaderboard(session.Id, AuthenticationService.GetAllPlayers());
@@ -261,8 +261,8 @@ private static void DisplayColorGradient(string[] text, ConsoleColor startColor,
                 Console.WriteLine($"{i+1}. {entry.Name}: {entry.Score} correct + {entry.TimeBonus} time bonus = {entry.Total} points");
             }
 
-            Console.ResetColor();
-        }
+      Console.ResetColor();
+    }
 
         internal static void UpdateTimerOnly(int row, int secondsRemaining, int totalSeconds)
         {
@@ -285,96 +285,96 @@ private static void DisplayColorGradient(string[] text, ConsoleColor startColor,
             Console.SetCursorPosition(originalCol, originalRow);
         }
 
-        public static async Task DisplayActiveSessionsAsync(List<SessionView> sessions)
+    public static async Task DisplayActiveSessionsAsync(List<SessionView> sessions)
+    {
+      AnsiConsole.MarkupLine("\n📡 [bold underline]Active Sessions[/]");
+
+      if (sessions.Count == 0)
+      {
+        AnsiConsole.MarkupLine("[grey]No active sessions found.[/]");
+        return;
+      }
+
+      var grid = new Grid();
+      grid.AddColumn();
+      grid.AddColumn();
+
+      var panels = sessions.Select(session =>
+      {
+        var timeParts = session.endsIn.Split(new[] { 'm', 's' }, StringSplitOptions.RemoveEmptyEntries);
+        int minutes = int.TryParse(timeParts[0], out var parsedMinutes) ? parsedMinutes : 0;
+
+        var color = minutes < 5 ? "red" : "green";
+
+        return new Panel(new Markup(
+                  $"[bold]{session.category}[/]\n" +
+                  $"[blue]Code:[/] {session.sessionCode}\n" +
+                  $"[blue]Ends In:[/] [{color}]{minutes}m[/]"))
         {
-            AnsiConsole.MarkupLine("\n📡 [bold underline]Active Sessions[/]");
+          Border = BoxBorder.Double,
+          Padding = new Padding(1, 0, 1, 0)
+        };
+      }).ToList();
 
-            if (sessions.Count == 0)
-            {
-                AnsiConsole.MarkupLine("[grey]No active sessions found.[/]");
-                return;
-            }
+      for (int i = 0; i < panels.Count; i += 2)
+      {
+        if (i + 1 < panels.Count)
+          grid.AddRow(panels[i], panels[i + 1]);
+        else
+          grid.AddRow(panels[i]);
+      }
 
-            var grid = new Grid();
-            grid.AddColumn();
-            grid.AddColumn();
+      AnsiConsole.Write(grid);
 
-            var panels = sessions.Select(session =>
-            {
-                var timeParts = session.endsIn.Split(new[] { 'm', 's' }, StringSplitOptions.RemoveEmptyEntries);
-                int minutes = int.TryParse(timeParts[0], out var parsedMinutes) ? parsedMinutes : 0;
+      var sessionCode = AnsiConsole.Ask<string>("\n▶️ [bold yellow]Enter a session code to join or press Enter to cancel:[/]");
 
-                var color = minutes < 5 ? "red" : "green";
-
-                return new Panel(new Markup(
-                    $"[bold]{session.category}[/]\n" +
-                    $"[blue]Code:[/] {session.sessionCode}\n" +
-                    $"[blue]Ends In:[/] [{color}]{minutes}m[/]"))
-                {
-                    Border = BoxBorder.Double,
-                    Padding = new Padding(1, 0, 1, 0)
-                };
-            }).ToList();
-
-            for (int i = 0; i < panels.Count; i += 2)
-            {
-                if (i + 1 < panels.Count)
-                    grid.AddRow(panels[i], panels[i + 1]);
-                else
-                    grid.AddRow(panels[i]);
-            }
-
-            AnsiConsole.Write(grid);
-
-            var sessionCode = AnsiConsole.Ask<string>("\n▶️ [bold yellow]Enter a session code to join or press Enter to cancel:[/]");
-
-            if (!string.IsNullOrWhiteSpace(sessionCode))
-            {
-                var selectedSession = sessions.FirstOrDefault(s => s.sessionCode.Equals(sessionCode, StringComparison.OrdinalIgnoreCase));
-                if (selectedSession != null)
-                {
-                    await SessionService.JoinSessionAsync(sessionCode);
-                }
-                else
-                {
-                    AnsiConsole.MarkupLine($"❌ [red]Invalid session code:[/] {sessionCode}");
-                }
-            }
-            else
-            {
-                AnsiConsole.MarkupLine("[grey]No session joined.[/]");
-            }
-        }
-
-        public static void DisplaySpaceFact(string fact)
+      if (!string.IsNullOrWhiteSpace(sessionCode))
+      {
+        var selectedSession = sessions.FirstOrDefault(s => s.sessionCode.Equals(sessionCode, StringComparison.OrdinalIgnoreCase));
+        if (selectedSession != null)
         {
-            Console.Clear();
-            PrintGalaxyHeader();
-            
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("🌟 Space Fact of the Day 🌟");
-            Console.WriteLine(new string('─', Console.WindowWidth));
-            Console.ResetColor();
-            
-            var words = fact.Split(' ');
-            var line = new StringBuilder();
-            foreach (var word in words)
-            {
-                if (line.Length + word.Length > Console.WindowWidth - 4)
-                {
-                    Console.WriteLine($"  {line}");
-                    line.Clear();
-                }
-                line.Append(word + " ");
-            }
-            Console.WriteLine($"  {line}");
-            
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\nCourtesy of NASA's Astronomy Picture of the Day");
-            Console.ResetColor();
-            
-            Continue();
+          await SessionService.JoinSessionAsync(sessionCode);
         }
+        else
+        {
+          AnsiConsole.MarkupLine($"❌ [red]Invalid session code:[/] {sessionCode}");
+        }
+      }
+      else
+      {
+        AnsiConsole.MarkupLine("[grey]No session joined.[/]");
+      }
+    }
+
+    public static void DisplaySpaceFact(string fact)
+    {
+      Console.Clear();
+      PrintGalaxyHeader();
+
+      Console.ForegroundColor = ConsoleColor.Cyan;
+      Console.WriteLine("🌟 Space Fact of the Day 🌟");
+      Console.WriteLine(new string('─', Console.WindowWidth));
+      Console.ResetColor();
+
+      var words = fact.Split(' ');
+      var line = new StringBuilder();
+      foreach (var word in words)
+      {
+        if (line.Length + word.Length > Console.WindowWidth - 4)
+        {
+          Console.WriteLine($"  {line}");
+          line.Clear();
+        }
+        line.Append(word + " ");
+      }
+      Console.WriteLine($"  {line}");
+
+      Console.ForegroundColor = ConsoleColor.DarkGray;
+      Console.WriteLine("\nCourtesy of NASA's Astronomy Picture of the Day");
+      Console.ResetColor();
+
+      Continue();
+    }
 
         public static async Task DisplaySessionQuestionsAsync(List<SessionQuestionView> questions)
         {
@@ -544,6 +544,61 @@ private static void DisplayColorGradient(string[] text, ConsoleColor startColor,
             }
             return markup;
         }
+        public static async Task DisplayPlayerStats(Task<List<PlayerStatsDTO>> data)
+    {
+      try
+      {
+        UIService.PrintGalaxyHeader();
+        AnsiConsole.MarkupLine($"\n[bold yellow]🚀 PLAYER STATS:[/]\n");
+
+        var dataList = await data;
+
+        // Extract key stats
+        var highestScore = dataList.Max(x => x.sessionScore);
+        var totalSessions = dataList.Select(x => x.sessionCode).Distinct().Count();
+
+        // Main session stats table
+        var table = new Table()
+            .Border(TableBorder.Rounded)
+            .BorderColor(Color.Blue)
+            .AddColumn(new TableColumn("[bold]Session Code[/]").Centered())
+            .AddColumn(new TableColumn("[bold]Category[/]").Centered())
+            .AddColumn(new TableColumn("[bold]Score[/]").Centered())
+            .AddColumn(new TableColumn("[bold]Ranking[/]").Centered());
+
+        foreach (var entry in dataList)
+        {
+          table.AddRow(
+              $"[bold]{entry.sessionCode}[/]",
+              $"[bold]{entry.category}[/]",
+              $"[bold]{entry.sessionScore}[/]",
+              $"[bold]#{entry.ranking}[/]"
+          );
+        }
+
+        AnsiConsole.Write(table);
+
+        // Summary table
+        var summaryTable = new Table()
+            .Border(TableBorder.Square)
+            .BorderColor(Color.Blue)
+            .AddColumn(new TableColumn("[bold]Total Sessions[/]").Centered())
+            .AddColumn(new TableColumn("[bold]Highest Score[/]").Centered());
+
+        summaryTable.AddRow(
+            $"[bold]{totalSessions}[/]",
+            $"[bold]{highestScore}[/]"
+        );
+
+        AnsiConsole.WriteLine(); // Just a bit of spacing
+        AnsiConsole.Write(summaryTable);
+      }
+      catch (Exception ex)
+      {
+        AnsiConsole.MarkupLine("[red]Error loading session leaderboard:[/]");
+        AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
+      }
+    }}
         public static async Task DisplayGlobalLeaderboard()
         {
              try

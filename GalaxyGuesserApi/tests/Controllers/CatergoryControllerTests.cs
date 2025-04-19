@@ -3,9 +3,10 @@ using Moq;
 using Microsoft.AspNetCore.Mvc;
 using GalaxyGuesserApi.Models;
 using GalaxyGuesserApi.Services;
+using GalaxyGuesserApi.Controllers;
 using GalaxyGuesserApi.Repositories.Interfaces;
 
-namespace GalaxyGuesserApi.Controllers
+namespace GalaxyGuesserApi.Tests.Controllers
 {
     public class CategoryControllerTests
     {

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using GalaxyGuesserApi.Models;
+using GalaxyGuesserApi.Models.DTO;
 using System.Security.Claims;
 using GalaxyGuesserApi.Services;
 using System.ComponentModel.DataAnnotations;
@@ -153,7 +154,7 @@ namespace GalaxyGuesserApi.Controllers
                     return Forbid();
                 }
 
-                var updated = await _playerService.UpdatePlayerAsync(playerId, request.UserName);
+                var updated = await _playerService.UpdatePlayerUsernameAsync(playerId, request.UserName);
 
                 if (!updated)
                 {
@@ -244,5 +245,19 @@ namespace GalaxyGuesserApi.Controllers
                     ApiResponse<Player>.ErrorResponse("An error occurred while authenticating or registering the player", new List<string> { ex.Message }));
             }
         }
+
+        [HttpGet("{playerId}/stats")]
+    public async Task<ActionResult<IEnumerable<PlayerStatsDTO>>> GetPlayersStats(int playerId)
+    {
+      try
+      {
+        var profileSessions = await _playerService.GetPlayersStats(playerId);
+        return Ok(profileSessions);
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500, $"Error: {ex.Message}");
+      }
     }
-}
+    }
+    }

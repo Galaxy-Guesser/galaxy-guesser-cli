@@ -151,7 +151,7 @@ namespace ConsoleApp1
                     },
 
                     ["Change Username"] = async () => {
-                        CommandService.ProcessCommand("editprofile", player);
+                        CommandService.ProcessCommand("editusername", player);
                     },
 
                     ["↩️ Back to Main Menu"] = () => {

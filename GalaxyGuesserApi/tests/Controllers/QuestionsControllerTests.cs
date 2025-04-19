@@ -5,7 +5,7 @@ using GalaxyGuesserApi.Controllers;
 using GalaxyGuesserApi.Models;
 using GalaxyGuesserApi.Services.Interfaces;
 
-namespace GalaxyGuesserApi.Tests
+namespace GalaxyGuesserApi.Tests.Controllers
 {
     public class QuestionsControllerTests
     {
